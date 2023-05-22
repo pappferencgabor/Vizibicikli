@@ -62,12 +62,26 @@ namespace ConVizibicikli
             }
 
             // 7.
+            Console.Write($"7. feladat: Adjon meg egy időpontot óra:perc alakban: ");
+            string datum = Console.ReadLine();
+            var felbontott = datum.Split(":");
+            Console.WriteLine($"\tA vízen lévő járművek: ");
+            kolcsonzesek.Where(x => (x.EOra * 60 + x.EPerc) <= int.Parse(felbontott[0]) * 60 + int.Parse(felbontott[1]) && (x.VOra * 60 + x.VPerc) >= int.Parse(felbontott[0]) * 60 + int.Parse(felbontott[1]))
+                .ToList()
+                .ForEach(x => Console.WriteLine($"\t{x.EOra}:{x.EPerc}-{x.VOra}:{x.VPerc} : {x.Nev}"));
+                // MEGJEGYZÉS: vezető nullákat nem tudom hogy rakjak bele!    
 
             // 8.
             Console.WriteLine($"8. feladat: A napi bevétel: {2400 * kolcsonzesek.Sum(x => x.IdoHossz())/ 30 + 1} Ft");
 
             // 9.
-
+            // x => elkovetok.Append($"{x.EOra}:{x.EPerc}-{x.VOra}:{x.VPerc} : {x.Nev}\n")
+            List<string> elkovetok = new List<string>();
+            kolcsonzesek
+                .Where(x => x.JAzon == 'F')
+                .ToList()
+                .ForEach(x => elkovetok.Add($"{x.EOra}:{x.EPerc}-{x.VOra}:{x.VPerc} : {x.Nev}"));
+            File.WriteAllLines("Datasources\\F.txt", elkovetok);
 
             // 10.
             kolcsonzesek.GroupBy(x => x.JAzon).OrderBy(x => x.Key).ToList().ForEach(x => Console.WriteLine($"\t{x.Key} - {x.Count()}"));
